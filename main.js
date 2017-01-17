@@ -39,9 +39,14 @@ socket.on('connection', function(socket) {
 
       
       // CHAT COMMENT, first capture group is username, second capture group is message.
-      irc.on(/^@badges.*;color=(.*);display-name=(.*);emotes=.*PRIVMSG #\w* :(.*)$/gmiu, function(info) {
-          socket.emit('chat', {username: info[2], message: info[3], badges: [], color: info[1]});
-          console.log(info[1]+": "+info[2]);
+      irc.on(/^@badges=(.*);color=(.*);display-name=(.*);emotes=.*;subscriber=(\d*);.*PRIVMSG #\w* :(.*)$/gmiu, function(info) {
+      
+          var badges = info[1];
+
+          var isPrime = badges.match(/premium\/1/gmi) !== null || badges.match(/turbo\/1/gmi) !== null ;
+
+          socket.emit('chat', {username: info[3], message: info[5], badges: [], color: info[2], subscriberLength: info[4], isPrime: isPrime });
+          console.log(info[1]+": "+info[3]);
       });
 
       // irc.on(/^\:(.*)!.+\ PRIVMSG .* \:\!ping$/gmi, function(info) {

@@ -1,13 +1,15 @@
 <!--<button (click)="SendKappa()">Send Kappa</button>-->
 <div class="chat-box">
     <div class="chat-header">
-        @{{channelName}}
+        @{{channelName}} [{{channelInfo.viewers}} viewers] - {{channelInfo.streamTitle}}
 
         <div class="pull-right"><a [routerLink]="['/']">[ BACK ]</a></div>
 
     </div>
     <div class="scrollbox chat-messages">
         <ul class="chat-list">
-            <li *ngFor="let data of messages"><span class="username" [style.color]="data.color">{{data.username}}</span>: <span [innerHTML]="data.message"></span></li>
+            <li *ngFor="let data of messages">
+                <img src="./img/prime.png" *ngIf="data.prime"> <img src="./img/subscriber.png" *ngIf="data.subscriber"> <span class="username" [style.color]="data.color">{{data.username}}</span>: <span [innerHTML]="data.message"></span>
+            </li>
         </ul>
     </div>

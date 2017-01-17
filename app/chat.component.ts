@@ -5,13 +5,15 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import * as io from 'socket.io-client';
 import * as $ from 'jquery';
 
-import { TwitchService } from './twitch.service';
+import { TwitchService, IChannelInfo } from './twitch.service';
 import { ChatMessageComponent } from './chat-message.component';
 
 export interface ChatMessage {
     username: string;
     color: string;
     message: string;
+    subscriber: boolean;
+    prime: boolean;
 }
 
 @Component({
@@ -25,8 +27,11 @@ export class ChatComponent {
     private chatConnection;
 
     public messages: Array<ChatMessage> = [];
+    public channelInfo: IChannelInfo;
 
     constructor(private _Twitch: TwitchService, private _zone: NgZone) {
+        this.channelInfo =  { profilePicture: "logo", streamTitle: "status", viewers: 0};
+        
         this.chatConnection = this._Twitch.getChat$().subscribe(message => {
             this.AddMessage(message);
 
@@ -44,7 +49,9 @@ export class ChatComponent {
                 this.messages.shift();
             }
 
-            this.messages.push({ username: data.username, color: data.color || '#DDDDDD', message: this._Twitch.ParseChatMessage(data.message) });
+            this.messages.push({ username: data.username, color: data.color || '#DDDDDD', message: this._Twitch.ParseChatMessage(data.message), subscriber: data.subscriberLength > 0, prime: data.isPrime });
+
+            console.log(data.subscriberLength > 0);
 
             $(".scrollbox").each((index, element) => {
                 element.scrollTop = element.scrollHeight + 60;
@@ -59,6 +66,12 @@ export class ChatComponent {
 
     ngOnDestroy() {
         this.chatConnection.unsubscribe();
+    }
+
+    ngOnInit() {
+        this._Twitch.GetStreamInfo(this.channelName).subscribe(info => {
+            this.channelInfo = info;
+        });  
     }
 
 }

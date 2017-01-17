@@ -3,8 +3,28 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import { Http, Response, Headers } from '@angular/http';
 
-import { IChannel, IEmote } from './browser.component';
 import { IRCService } from './irc.service';
+
+export interface IChannel {
+    viewers: number;
+    displayName: string;
+    //constructor(displayName: string, viewers: number);
+}
+
+export interface IEmote {
+    //emoticon_set: number;
+    // width: number;
+    // height: number;
+    id: string;
+    url: string;
+    matchString: string;
+}
+
+export interface IChannelInfo {
+    profilePicture: string;
+    streamTitle: string;
+    viewers: number;
+}
 
 @Injectable()
 export class TwitchService {
@@ -67,6 +87,21 @@ export class TwitchService {
 
                 return result;
 
+            });
+
+        return req;
+    }
+
+    public GetStreamInfo(channel: string): Observable<IChannelInfo> {
+        let url: string = this.baseURL + 'streams' + '/' + channel;
+
+        console.log("Getting channel information for "+channel);
+
+        let req = this._http.get(url, { headers: this.headers })
+            .map((res: Response) => res.json())
+            .map((channel: Array<any>) => {
+                    return { profilePicture: channel.stream.channel.logo, streamTitle: channel.stream.channel.status, viewers: channel.stream.viewers };
+    
             });
 
         return req;
