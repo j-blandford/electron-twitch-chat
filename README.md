@@ -1,7 +1,7 @@
 # electron-twitch-chat
 A native Twitch Chat client written in Javascript and Typescript
 
-It uses Electron (http://atom.electron.io) which provides a native application running Node and the Chrome renderer. 
+It uses Electron (https://www.electronjs.org) which provides a native application running Node and the Chrome renderer. 
 
 The Node.js backend connects to Twitch's chat API (through the IRC protocol) and then it communicates to the Angular frontend through a web socket.
 
